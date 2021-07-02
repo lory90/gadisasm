@@ -9228,10 +9228,12 @@ loc_7BD6:
 loc_7BEE:
 	rts
 loc_7BF0:
-	dc.b	$00, $00, $00, $00, $7C, $EE, $00, $00 ;0x0 (0x00007BF0-0x00007BF8, Entry count: 0x00000008) [Unknown data]
-	dc.l	$00007CFC
-	dc.b	$00, $00 ;0x0 (0x00007BFC-0x00007BFE, Entry count: 0x00000002) [Unknown data]
-	dc.l	$00007D10
+	dc.w	$0000
+	dc.l	loc_7CEE
+	dc.w	$0000
+	dc.l	loc_7CFC
+	dc.w	$0000
+	dc.l	loc_7D10
 loc_7C02:
 	clr.l	$FFFFC204.w
 	clr.l	$FFFFC208.w
@@ -9303,10 +9305,17 @@ loc_7CCA:
 	dc.w	$0000, $0400 ;0x0 (0x00007CCA-0x00007CCE, Entry count: 0x00000004)
 loc_7CCE:
 	dc.b	$00, $0C, $04, $00, $FF, $F4, $0C, $00, $00, $18, $04, $00, $FF, $E8, $0C, $00
-	dc.b	$00, $24, $04, $00, $FF, $DC, $0C, $00, $00, $30, $04, $00, $FF, $D0, $0C, $00 ;0x0 (0x00007CCE-0x00007D1A, Entry count: 0x0000004C) [Unknown data]
-	dc.b	$00, $00, $12, $04, $12, $04, $13, $08, $13, $08, $14, $10, $0B, $18, $00, $00
+	dc.b	$00, $24, $04, $00, $FF, $DC, $0C, $00, $00, $30, $04, $00, $FF, $D0, $0C, $00
+
+loc_7CEE:
+	dc.b	$00, $00, $12, $04, $12, $04, $13, $08, $13, $08, $14, $10, $0B, $18
+	
+loc_7CFC:
+	dc.b	$00, $00
 	dc.b	$20, $04, $20, $04, $20, $04, $20, $04, $11, $08, $25, $10, $23, $18, $0D, $20 ;0x20
-	dc.b	$09, $28, $00, $00, $17, $04, $0F, $08, $0F, $08, $18, $10 ;0x40
+	dc.b	$09, $28
+loc_7D10:
+	dc.b	$00, $00, $17, $04, $0F, $08, $0F, $08, $18, $10 ;0x40
 loc_7D1A:
 	bset	#7, $42(a0)
 	beq.w	loc_7DAE
@@ -9947,7 +9956,14 @@ loc_8580:
 loc_8582:
 	bset	#7, $42(a0)
 	rts
-	dc.b	$30, $38, $C2, $0C, $32, $28, $00, $18, $04, $41, $00, $80, $D0, $41, $31, $40, $00, $20, $4E, $75 ;0x0 (0x0000858A-0x0000859E, Entry count: 0x00000014) [Unknown data]
+
+	move.w	($FFFFC20C).w, d0
+	move.w	$18(a0), d1
+	subi.w	#$80, d1
+	add.w	d1, d0
+	move.w	d0, $20(a0)
+	rts
+
 loc_859E:
 	cmp.w	$52(a0), d7
 	bne.w	loc_860E
@@ -10097,12 +10113,12 @@ loc_8778:
 loc_877E:
 	dc.l	loc_879E
 	dc.l	loc_87A4
-	dc.l	loc_87C2	;Predicted
+	dc.l	loc_87C2
 	dc.l	loc_87CC
-	dc.l	loc_87D2	;Predicted
-	dc.l	loc_87DC	;Predicted
+	dc.l	loc_87D2
+	dc.l	loc_87DC
 	dc.l	loc_87E6
-	dc.b	$00, $00, $88, $04 ;0x0 (0x0000879A-0x0000879E, Entry count: 0x00000004) [Unknown data]
+	dc.l	loc_8804
 loc_879E:
 	dc.b	$00, $00, $06, $00, $00, $A8 ;0x0 (0x0000879E-0x000087A4, Entry count: 0x00000006) [Unknown data]
 loc_87A4:
@@ -10122,7 +10138,10 @@ loc_87DC:
 	dc.b	$00, $01, $00, $10, $01, $30, $02, $00, $00, $F0 ;0x0 (0x000087DC-0x000087E6, Entry count: 0x0000000A) [Unknown data]
 loc_87E6:
 	dc.b	$00, $06, $00, $60, $00, $70, $01, $3C, $00, $80, $01, $D0, $00, $78, $02, $80
-	dc.b	$00, $A8, $03, $10, $00, $90, $04, $18, $00, $70, $06, $00, $00, $A0, $00, $00 ;0x0 (0x000087E6-0x0000880A, Entry count: 0x00000024) [Unknown data]
+	dc.b	$00, $A8, $03, $10, $00, $90, $04, $18, $00, $70, $06, $00, $00, $A0
+	
+loc_8804:
+	dc.b	$00, $00 ;0x0 (0x000087E6-0x0000880A, Entry count: 0x00000024) [Unknown data]
 	dc.b	$06, $00, $00, $B0 ;0x20
 loc_880A:
 	clr.b	$14(a0)
