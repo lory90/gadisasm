@@ -2,12 +2,15 @@
 ; |           Golden Axe Disassembly for Mega Drive/Genesis                 |
 ;  =========================================================================
 ;
-;  Created by Lorenzo, <lory2004@gmail.com>
+;  Created by lory90
 ;
 ; 	Credits
 ;
 ; - Nemesis for the Active Disassembler tool of the Exodus emulator.
-
+;
+; - Sonic Retro members for providing info and tools to make the whole process much easier.
+;   Particularly they modified the p2bin source file to make it work with both m68k and z80 in a simple way,
+;   an exe to compare an original ROM file with the one produced by the disasm, and macros and functions which I used as a base.
 
 	cpu 68000
 	include "ga.macrosetup.asm"
