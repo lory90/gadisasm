@@ -14,6 +14,7 @@
 
 	cpu 68000
 	include "ga.macrosetup.asm"
+	include "ga.constants.asm"
 
 StartOfRom:
 	if (*) <> 0
@@ -202,7 +203,7 @@ loc_32A:
 	move.w	d1, (a1)
 	lea	$8(a1), a1
 	dbf	d2, loc_32A
-	clr.l	$FFFFC176.w
+	clr.l	(Ctrl_1).w
 	andi	#$F8FF, sr
 	move.w	#$8174, (a6)
 loc_340:
@@ -708,37 +709,37 @@ loc_C3E:
 	bsr.w	loc_2CAA
 	andi	#$F8FF, sr
 
-GameLoop:
-	move.w	$FFFFC170.w, d0
+MainGameLoop:
+	move.w	(Game_mode).w, d0
 	cmpi.w	#$FFFF, d0
 	beq.s	+
-	move.w	#$FFFF, $FFFFC170.w
-	move.w	d0, $FFFFC172.w
+	move.w	#$FFFF, (Game_mode).w
+	move.w	d0, (Saved_game_mode).w
 +
 	ori	#$700, sr
-	move.w	$FFFFC172.w, d0
+	move.w	(Saved_game_mode).w, d0
 	andi.l	#$7C, d0
-	jsr	loc_CA2(pc,d0.w)
-	bra.s	GameLoop
+	jsr	GameModeTable(pc,d0.w)
+	bra.s	MainGameLoop
 
-loc_CA2:
-	bra.w	loc_DB8
-	bra.w	loc_39AE
-	bra.w	loc_41BE
-	bra.w	loc_1228
-	bra.w	loc_1926
-	bra.w	loc_545A
-	bra.w	loc_57D8
-	bra.w	loc_2858
-	bra.w	loc_5C8E
-	bra.w	loc_470C
-	bra.w	loc_4810
-	bra.w	loc_48A6
-	bra.w	loc_65E6
-	bra.w	loc_4B96
-	bra.w	loc_4D48
-	bra.w	loc_502A
-	bra.w	loc_53AA
+GameModeTable:
+	bra.w	GameMode_Sega	; 0
+	bra.w	GameMode_Title	; 4
+	bra.w	GameMode_PlayerSelect	; 8
+	bra.w	GameMode_Level	; $C
+	bra.w	GameMode_Demo	; $10
+	bra.w	GameMode_CharacterProfile	; $14
+	bra.w	GameMode_Narration	; $18
+	bra.w	GameMode_Camping	; $1C
+	bra.w	GameMode_Results	; $20
+	bra.w	GameMode_Ending	; $24
+	bra.w	GameMode_BeginnerEnding	; $28
+	bra.w	GameMode_Profile	; $2C
+	bra.w	GameMode_Credits	; $30
+	bra.w	GameMode_DuelVsInfo	; $34
+	bra.w	GameMode_Duel	; $38
+	bra.w	GameMode_NextDuel	; $3C
+	bra.w	GameMode_GameOver	; $40
 	
 
 HBlank:
@@ -768,7 +769,7 @@ loc_D30:
 	btst	#1, $FFFFC183.w
 	beq.s	loc_D58
 	bsr.w	loc_33FC
-	move.w	$FFFFC172.w, d0
+	move.w	(Saved_game_mode).w, d0
 	btst	#$F, d0
 	beq.s	loc_D58
 	andi.w	#$FC, d0
@@ -809,7 +810,7 @@ loc_DB6:
 	rts
 	
 
-loc_DB8:
+GameMode_Sega:
 	jsr	loc_34BC(pc)
 	jsr	loc_234(pc)
 	lea	$FFFFFE74.w, a0
@@ -822,7 +823,7 @@ loc_DC8:
 loc_DD6:
 	clr.l	(a0)+
 	dbf	d0, loc_DD6
-	move.w	#4, $FFFFC170.w
+	move.w	#4, (Game_mode).w
 	lea	$FFFFC000.w, a0
 	moveq	#$3F, d0
 loc_DE8:
@@ -1203,8 +1204,8 @@ loc_1220:
 	bclr	#2, $FFFFC201.w
 loc_1226:
 	rts
-loc_1228:
-	bset	#7, $FFFFC172.w
+GameMode_Level:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_12DC
 	bsr.w	loc_281C
 	bne.s	loc_1248
@@ -1218,7 +1219,7 @@ loc_1248:
 loc_124C:
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
-	move.w	#$18, $FFFFC170.w
+	move.w	#$18, (Game_mode).w
 	clr.w	$FFFFFE2C.w
 	bra.s	loc_128E
 
@@ -1232,7 +1233,7 @@ loc_125E:
 loc_1282:
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
-	move.w	#$1C, $FFFFC170.w
+	move.w	#$1C, (Game_mode).w
 loc_128E:
 	move.l	#$C03E0000, $00C00004
 	move.w	#0, $00C00000
@@ -1241,7 +1242,7 @@ loc_128E:
 loc_12A8:
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
-	move.w	#$C, $FFFFC170.w
+	move.w	#$C, (Game_mode).w
 	addq.w	#1, $FFFFFE2C.w
 	andi.w	#7, $FFFFFE2C.w
 	move.l	#$C03E0000, $00C00004
@@ -1697,12 +1698,12 @@ loc_18C0:
 	clr.b	$FFFFC1BA.w
 	clr.l	$FFFFFE74.w
 	clr.w	$FFFFC19C.w
-	move.w	#8, $FFFFC170.w
+	move.w	#8, (Game_mode).w
 	rts
 ; ----------------------------------
 
-loc_1926:
-	bset	#7, $FFFFC172.w
+GameMode_Demo:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_19EA
 	btst	#6, $FFFFC104.w
 	bne.s	loc_1952
@@ -1717,7 +1718,7 @@ loc_1952:
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
 	bsr.w	loc_2C88
-	move.w	#$14, $FFFFC170.w
+	move.w	#$14, (Game_mode).w
 	clr.l	$FFFFC218.w
 	bsr.w	loc_14EA
 	move.l	#$C03E0000, $00C00004
@@ -1739,7 +1740,7 @@ loc_198A:
 loc_19A8:
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
-	move.w	#4, $FFFFC170.w
+	move.w	#4, (Game_mode).w
 	clr.w	$FFFFC104.w
 	bclr	#0, $FFFFC1C1.w
 	bra.w	loc_31CE
@@ -1803,7 +1804,7 @@ loc_1A86:
 loc_1A9E:
 	lea	$FFFFFFF0.w, a0
 	lea	$FFFFFE0A.w, a1
-	lea	$FFFFC176.w, a2
+	lea	(Ctrl_1).w, a2
 	bsr.s	loc_1ABE
 	jmp	loc_14EA(pc)
 loc_1AB0:
@@ -2382,7 +2383,7 @@ loc_22B4:
 	bsr.w	loc_2014
 	bra.s	loc_2270
 loc_22E0:
-	move.w	#$40, $FFFFC170.w
+	move.w	#$40, (Game_mode).w
 	rts
 loc_22E8:
 	bset	#6, $FFFFC105.w
@@ -2680,7 +2681,7 @@ loc_26D4:
 loc_26D6:
 	cmpi.b	#7, $FFFFFE2D.w
 	bne.s	loc_2714
-	move.w	#$24, $FFFFC170.w
+	move.w	#$24, (Game_mode).w
 	clr.l	$FFFFC2A2.w
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
@@ -2700,7 +2701,7 @@ loc_26FA:
 loc_2714:
 	btst	#2, $FFFFC104.w
 	beq.w	loc_2566
-	move.w	#$28, $FFFFC170.w
+	move.w	#$28, (Game_mode).w
 	clr.w	$FFFFFE2C.w
 	clr.l	$FFFFC2A2.w
 	moveq	#-$20, d7
@@ -2783,8 +2784,8 @@ loc_284E:
 loc_2852:
 	tst.b	$FFFFC175.w
 	rts
-loc_2858:
-	bset	#7, $FFFFC172.w
+GameMode_Camping:
+	bset	#7, (Saved_game_mode).w
 	beq.s	loc_28BC
 	bsr.s	loc_281C
 	bne.s	loc_288C
@@ -2812,7 +2813,7 @@ loc_2890:
 	beq.s	loc_28B4
 	moveq	#$C, d0
 loc_28B4:
-	move.w	d0, $FFFFC170.w
+	move.w	d0, (Game_mode).w
 	bra.w	loc_2EEC
 loc_28BC:
 	ori	#$700, sr
@@ -3900,10 +3901,10 @@ loc_33E6:
 	move.b	d0, $00A1000D
 	rts
 loc_33FC:
-	lea	$FFFFC176.w, a0
-	lea	$00A10003, a1
+	lea	(Ctrl_1).w, a0
+	lea	(HW_Port_1_Data).l, a1
 	bsr.w	loc_3410
-	lea	$00A10005, a1
+	lea	(HW_Port_2_Data).l, a1
 loc_3410:
 	move.w	#$100, $00A11100
 	move.b	#0, (a1)
@@ -4298,8 +4299,8 @@ loc_39A6:
 	divu.w	#$64, d0
 loc_39AC:
 	rts
-loc_39AE:
-	bset	#7, $FFFFC172.w
+GameMode_Title:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_3F54
 	moveq	#0, d0
 	move.b	$FFFFC1A0.w, d0
@@ -4334,7 +4335,7 @@ loc_3A10:
 loc_3A1E:
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
-	move.w	#$10, $FFFFC170.w
+	move.w	#$10, (Game_mode).w
 	jmp	loc_31CE(pc)
 loc_3A2E:
 	jsr	(loc_B72E).l
@@ -4470,7 +4471,7 @@ loc_3BFE:
 	clr.l	$FFFFFE6C.w
 	clr.w	$FFFFC19C.w
 	clr.w	$FFFFFE2C.w
-	move.w	#8, $FFFFC170.w
+	move.w	#8, (Game_mode).w
 	jmp	loc_31CE(pc)
 loc_3C26:
 	bset	#7, $FFFFC1A0.w
@@ -4873,8 +4874,8 @@ loc_4196:
 	move.l	#$6C000002, $00C00004
 	move.w	$FFFFC21A.w, (a1)
 	rts
-loc_41BE:
-	bset	#7, $FFFFC172.w
+GameMode_PlayerSelect:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_4384
 	bsr.w	loc_DA6
 	ori	#$700, sr
@@ -4890,7 +4891,7 @@ loc_41EE:
 	move.w	$FFFFC104.w, d0
 	andi.w	#$601, d0
 	bne.s	loc_421C
-	move.b	$FFFFC176.w, d0
+	move.b	(Ctrl_1).w, d0
 	move.b	d0, d1
 	andi.b	#9, d1
 	bne.s	loc_4210
@@ -4935,13 +4936,13 @@ loc_4252:
 loc_4294:
 	btst	#1, $FFFFC104.w
 	bne.s	loc_42B0
-	move.w	#$C, $FFFFC170.w
+	move.w	#$C, (Game_mode).w
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
 	move.w	#$600F, d1
 	bra.w	loc_36D8
 loc_42B0:
-	move.w	#$34, $FFFFC170.w
+	move.w	#$34, (Game_mode).w
 	move.w	#$600F, d1
 	bra.w	loc_36D8
 loc_42BE:
@@ -4972,7 +4973,7 @@ loc_42E8:
 	
 
 loc_4300:
-	lea	$FFFFC176.w, a6
+	lea	(Ctrl_1).w, a6
 	lea	$FFFFC1A0.w, a5
 	lea	$FFFFC1A8.w, a3
 	lea	$FFFFFE83.w, a4
@@ -5233,8 +5234,8 @@ loc_468A:
 	dc.b	$00, $20, $00, $00, $0C, $A0, $0A, $80, $08, $60, $06, $40, $04, $20, $00, $00
 	dc.b	$06, $8E, $00, $0E, $00, $0A, $00, $08, $00, $00, $00, $00, $00, $00, $00, $00 ;0x60
 	dc.b	$00, $00 ;0x80
-loc_470C:
-	bset	#7, $FFFFC172.w
+GameMode_Ending:
+	bset	#7, (Saved_game_mode).w
 	beq.s	loc_475A
 	btst	#4, $FFFFC104.w
 	bne.s	loc_472C
@@ -5244,7 +5245,7 @@ loc_470C:
 loc_472C:
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
-	move.w	#$18, $FFFFC170.w
+	move.w	#$18, (Game_mode).w
 	clr.w	$FFFFFE2C.w
 	move.l	#$C03E0000, $00C00004
 	move.w	#0, $00C00000
@@ -5298,8 +5299,8 @@ loc_47DE:
 	ori	#$700, sr
 	lea	(loc_38492).l, a6
 	bra.w	loc_2ED0
-loc_4810:
-	bset	#7, $FFFFC172.w
+GameMode_BeginnerEnding:
+	bset	#7, (Saved_game_mode).w
 	beq.s	loc_483A
 	move.b	$FFFFC177.w, d0
 	andi.b	#$F0, d0
@@ -5308,7 +5309,7 @@ loc_4810:
 	beq.s	loc_482C
 	jmp	loc_DA6(pc)
 loc_482C:
-	move.w	#$20, $FFFFC170.w
+	move.w	#$20, (Game_mode).w
 	andi	#$F8FF, sr
 	bra.w	loc_31CE
 loc_483A:
@@ -5341,8 +5342,8 @@ loc_4882:
 	jsr	(loc_2FC8).l
 	lea	(loc_38492).l, a6
 	bra.w	loc_2ED0
-loc_48A6:
-	bset	#7, $FFFFC172.w
+GameMode_Profile:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_4930
 	subq.w	#1, $FFFFC180.w
 	bne.s	loc_490C
@@ -5370,7 +5371,7 @@ loc_490C:
 	jmp	loc_DA6(pc)
 loc_4910:
 	bsr.w	loc_31CE
-	move.w	#$30, $FFFFC170.w
+	move.w	#$30, (Game_mode).w
 	rts
 loc_491C:
 	moveq	#$3F, d0
@@ -5577,8 +5578,8 @@ loc_4B78:
 	move.w	#0, (a5)
 	move.l	#$150011, (a5)
 	bra.w	loc_4A6C
-loc_4B96:
-	bset	#7, $FFFFC172.w
+GameMode_DuelVsInfo:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_4BE8
 	move.b	$FFFFC177.w, d0
 	andi.b	#$F0, d0
@@ -5590,7 +5591,7 @@ loc_4B96:
 	beq.s	loc_4BBE
 	bra.w	loc_DA6
 loc_4BBE:
-	move.w	#$38, $FFFFC170.w
+	move.w	#$38, (Game_mode).w
 	moveq	#-$20, d7
 	jsr	(loc_35F2).l
 	move.w	#$600F, d1
@@ -5679,8 +5680,8 @@ loc_4D24:
 	moveq	#$34, d0
 loc_4D44:
 	bra.w	loc_8894
-loc_4D48:
-	bset	#7, $FFFFC172.w
+GameMode_Duel:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_4E2C
 	bsr.w	loc_281C
 	bne.s	loc_4D9C
@@ -5703,7 +5704,7 @@ loc_4D7A:
 loc_4D9C:
 	jmp	loc_DA6(pc)
 loc_4DA0:
-	move.w	#$3C, $FFFFC170.w
+	move.w	#$3C, (Game_mode).w
 	moveq	#-$20, d7
 	jsr	(loc_35F2).l
 	move.w	#$600F, d1
@@ -5861,8 +5862,8 @@ loc_5018:
 	movea.l	(a6,d0.w), a6
 	move.w	#0, d6
 	bra.w	loc_2F6C
-loc_502A:
-	bset	#7, $FFFFC172.w
+GameMode_NextDuel:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_5096
 	move.b	$FFFFC177.w, d0
 	andi.b	#$F0, d0
@@ -5884,7 +5885,7 @@ loc_5062:
 	beq.s	loc_506A
 	moveq	#$30, d0
 loc_506A:
-	move.w	d0, $FFFFC170.w
+	move.w	d0, (Game_mode).w
 	moveq	#-$20, d7
 	jsr	(loc_35F2).l
 	move.w	#$600F, d1
@@ -5932,7 +5933,7 @@ loc_50E6:
 	addq.b	#1, $FFFFFE2B.w
 	cmpi.b	#$C, $FFFFFE2B.w
 	beq.s	loc_5124
-	move.w	#$34, $FFFFC170.W
+	move.w	#$34, (Game_mode).w
 	moveq	#-$77, d7
 	bsr.w	loc_35E8
 	andi	#$F8FF, sr
@@ -6156,9 +6157,9 @@ loc_53A4:
 	dc.b	$01, $00
 	dc.l	loc_7EC5E
 
-loc_53AA:
+GameMode_GameOver:
 	bsr.w	loc_DA6
-	bset	#7, $FFFFC172.w
+	bset	#7, (Saved_game_mode).w
 	beq.s	loc_53F8
 	ori	#$700, sr
 	subq.w	#1, $FFFFC180.w
@@ -6179,7 +6180,7 @@ loc_53E4:
 loc_53E6:
 	move.w	#$2009, d1
 	bsr.w	loc_36D8
-	move.w	#$20, $FFFFC170.w
+	move.w	#$20, (Game_mode).w
 	bra.w	loc_31CE
 loc_53F8:
 	ori	#$700, sr
@@ -6207,8 +6208,8 @@ loc_53F8:
 loc_5458:
 	rts
 
-loc_545A:
-	bset	#7, $FFFFC172.w
+GameMode_CharacterProfile:
+	bset	#7, (Saved_game_mode).w
 	beq.s	loc_54B6
 	bsr.w	loc_DA6
 	move.b	$FFFFC177.w, d0
@@ -6221,7 +6222,7 @@ loc_545A:
 	jsr	(loc_B92A).l
 	rts
 loc_5488:
-	move.w	#4, $FFFFC170.w
+	move.w	#4, (Game_mode).w
 	jmp	(loc_31CE).l
 loc_5494:
 	bsr.w	loc_31CE
@@ -6232,7 +6233,7 @@ loc_5494:
 	dc.l	$4238FE08
 	move.w	#4, d0
 loc_54B0:
-	move.w	d0, $FFFFC170.w
+	move.w	d0, (Game_mode).w
 	rts
 loc_54B6:
 	bsr.w	loc_5184
@@ -6398,7 +6399,7 @@ loc_56E6:
 loc_56EC:
 	andi	#$F8FF, sr
 	movem.l	(sp)+, d1/d2/d3/d4/d5/d6/a5
-	move.b	$FFFFC176.w, d0
+	move.b	(Ctrl_1).w, d0
 	andi.b	#$70, d0
 	bne.s	loc_571A
 	move.b	$FFFFC178.w, d0
@@ -6469,8 +6470,8 @@ loc_57BA:
 	dc.l	loc_2EB32
 	dc.b	$00, $16, $00, $0C, $00, $04
 	dc.l	loc_2ED8A
-loc_57D8:
-	bset	#7, $FFFFC172.w
+GameMode_Narration:
+	bset	#7, (Saved_game_mode).w
 	beq.s	loc_5830
 	subq.w	#1, $FFFFC180.w
 	beq.s	loc_5804
@@ -6497,7 +6498,7 @@ loc_5804:
 	addq.w	#1, $FFFFFE76.w
 	addq.w	#1, $FFFFFE7A.w
 loc_582A:
-	move.w	d0, $FFFFC170.w
+	move.w	d0, (Game_mode).w
 	rts
 loc_5830:
 	ori	#$700, sr
@@ -6731,7 +6732,7 @@ loc_5B4A:
 
 loc_5B6A:
 	movem.l	a6/a5/a4/d7/d6/d5/d4/d3/d2/d1/d0, -(sp)
-	cmpi.w	#$8018, $FFFFC172.w
+	cmpi.w	#$8018, (Saved_game_mode).w
 	bne.w	loc_5BE4
 	cmpi.w	#3, d7
 	bne.w	loc_5BE4
@@ -6822,8 +6823,8 @@ loc_5C76:
 	adda.l	#$14, a6
 	dbf	d5, loc_5C70
 	rts
-loc_5C8E:
-	bset	#7, $FFFFC172.w
+GameMode_Results:
+	bset	#7, (Saved_game_mode).w
 	beq.w	loc_601E
 	bsr.w	loc_DA6
 	bsr.w	loc_B92A
@@ -7027,7 +7028,7 @@ loc_5F38:
 	bne.w	loc_5F44
 	bra.w	loc_6004
 loc_5F44:
-	move.b	$FFFFC176.w, d0
+	move.b	(Ctrl_1).w, d0
 	andi.b	#$F0, d0
 	bne.w	loc_6004
 	move.b	$FFFFC178.w, d0
@@ -7096,7 +7097,7 @@ loc_6004:
 loc_600E:
 	subq.w	#1, $FFFFC322.w
 	bcc.w	loc_601C
-	move.w	#0, $FFFFC172.w
+	move.w	#0, (Saved_game_mode).w
 loc_601C:
 	rts
 
@@ -7525,8 +7526,8 @@ loc_65C8:
 	dc.b	$00, $03, $C7, $23, $03, $2C, $00, $02, $E9, $F6, $00, $00, $00, $02, $E9, $FE ;0x460
 	dc.b	$00, $00 ;0x480
 
-loc_65E6:
-	bset	#7, $FFFFC172.w
+GameMode_Credits:
+	bset	#7, (Saved_game_mode).w
 	beq.s	loc_6616
 	bsr.w	loc_B954
 	jsr	(loc_8982).l
@@ -7534,7 +7535,7 @@ loc_65E6:
 	beq.s	loc_6602
 	bra.w	loc_DA6
 loc_6602:
-	move.w	#$20, $FFFFC170.w
+	move.w	#$20, (Game_mode).w
 	moveq	#-$20, d7
 	bsr.w	loc_35E8
 	andi	#$F8FF, sr
@@ -13712,7 +13713,7 @@ loc_B954:
 	beq.s	loc_B978
 	lea	$FFFFD000.w, a0
 	lea	$FFFFFE7C.w, a2
-	lea	$FFFFC176.w, a6
+	lea	(Ctrl_1).w, a6
 	jsr	loc_BA06(pc)
 loc_B978:
 	cmpi.b	#$A6, $FFFFD042.w
@@ -15045,7 +15046,7 @@ loc_C8AC:
 loc_C8C2:
 	bra.w	loc_C9A4
 	bra.w	loc_C9BE
-	bra.w	loc_CA20
+	bra.w	GameModeTable0
 	bra.w	loc_CA62
 	bra.w	loc_CAB8
 	bra.w	loc_CAD2
@@ -15142,7 +15143,7 @@ loc_CA00:
 	clr.l	$30(a0)
 loc_CA1E:
 	rts
-loc_CA20:
+GameModeTable0:
 	moveq	#0, d2
 	moveq	#$C, d3
 	jsr	(loc_C2C2).l
