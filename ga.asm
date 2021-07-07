@@ -226,8 +226,8 @@ loc_35E:
 	bsr.w	loc_498
 	bset	#0, $FFFFC17C.w
 	bsr.w	loc_DA6
-	move.b	$FFFFC177.w, d0
-	or.b	$FFFFC179.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
+	or.b	(Ctrl_2_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.w	loc_496
 	tst.w	$00FF3108
@@ -247,8 +247,8 @@ loc_3AC:
 	dbf	d2, loc_3AC
 	bset	#0, $FFFFC17C.w
 	bsr.w	loc_DA6
-	move.b	$FFFFC177.w, d0
-	or.b	$FFFFC179.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
+	or.b	(Ctrl_2_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.w	loc_496
 	dbf	d7, loc_3A4
@@ -299,22 +299,22 @@ loc_43A:
 	dbf	d6, loc_408
 	bset	#0, $FFFFC17C.w
 	bsr.w	loc_DA6
-	move.b	$FFFFC177.w, d0
-	or.b	$FFFFC179.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
+	or.b	(Ctrl_2_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.w	loc_496
 	bset	#0, $FFFFC17C.w
 	bsr.w	loc_DA6
-	move.b	$FFFFC177.w, d0
-	or.b	$FFFFC179.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
+	or.b	(Ctrl_2_pressed).w, d0
 	andi.b	#$F0, d0
 	dbf	d7, loc_3EC
 	moveq	#$3B, d7
 loc_478:
 	bset	#0, $FFFFC17C.w
 	bsr.w	loc_DA6
-	move.b	$FFFFC177.w, d0
-	or.b	$FFFFC179.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
+	or.b	(Ctrl_2_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.w	loc_496
 	dbf	d7, loc_478
@@ -734,7 +734,7 @@ GameModeTable:
 	bra.w	GameMode_Results	; $20
 	bra.w	GameMode_Ending	; $24
 	bra.w	GameMode_BeginnerEnding	; $28
-	bra.w	GameMode_Profile	; $2C
+	bra.w	GameMode_Cast	; $2C
 	bra.w	GameMode_Credits	; $30
 	bra.w	GameMode_DuelVsInfo	; $34
 	bra.w	GameMode_Duel	; $38
@@ -774,7 +774,7 @@ loc_D30:
 	beq.s	loc_D58
 	andi.w	#$FC, d0
 	jsr	loc_D62(pc,d0.w)
-	addq.w	#1, $FFFFC17A.w
+	addq.w	#1, (V_int_run_count).w
 loc_D58:
 	clr.b	$FFFFC183.w
 	movem.l	(sp)+, d0-a6
@@ -1812,9 +1812,9 @@ loc_1AB0:
 	moveq	#-$20, d7
 	jmp	(loc_35E8).l
 loc_1ABE:
-	btst	#7, $FFFFC177.w
+	btst	#7, (Ctrl_1_pressed).w
 	bne.s	loc_1AB0
-	btst	#7, $FFFFC179.w
+	btst	#7, (Ctrl_2_pressed).w
 	bne.s	loc_1AB0
 	moveq	#0, d2
 	move.b	$4(a1), d0
@@ -2342,7 +2342,7 @@ loc_2236:
 	bne.s	loc_2270
 	tst.b	$FFFFFE34.w
 	beq.w	loc_22B4
-	btst	#7, $FFFFC177.w
+	btst	#7, (Ctrl_1_pressed).w
 	bne.w	loc_230A
 	move.b	$FFFFC17B.w, d0
 	btst	#5, d0
@@ -2360,7 +2360,7 @@ loc_2270:
 	bne.s	loc_22B2
 	tst.b	$FFFFFE34.w
 	beq.w	loc_22E8
-	btst	#7, $FFFFC179.w
+	btst	#7, (Ctrl_2_pressed).w
 	bne.w	loc_235A
 	move.b	$FFFFC17B.w, d0
 	btst	#5, d0
@@ -2502,12 +2502,12 @@ loc_247E:
 loc_2480:
 	move.l	#$4D080003, d7
 	lea	$FFFFC106.w, a0
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	bra.s	loc_249E
 loc_2490:
 	move.l	#$4D340003, d7
 	lea	$FFFFC10A.w, a0
-	move.b	$FFFFC179.w, d0
+	move.b	(Ctrl_2_pressed).w, d0
 loc_249E:
 	tst.b	(a0)
 	beq.s	loc_24CC
@@ -2765,12 +2765,12 @@ loc_281A:
 loc_281C:
 	btst	#1, $FFFFC105.w
 	beq.s	loc_282C
-	btst	#7, $FFFFC177.w
+	btst	#7, (Ctrl_1_pressed).w
 	bne.s	loc_283E
 loc_282C:
 	btst	#4, $FFFFC105.w
 	beq.s	loc_2852
-	btst	#7, $FFFFC179.w
+	btst	#7, (Ctrl_2_pressed).w
 	bne.s	loc_283E
 	bra.s	loc_2852
 loc_283E:
@@ -2792,7 +2792,7 @@ GameMode_Camping:
 	jsr	(loc_138FE).l
 	tst.w	$FFFFC26C.w
 	bne.s	loc_2876
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	beq.s	loc_2890
 loc_2876:
 	bsr.w	loc_2236
@@ -2822,7 +2822,7 @@ loc_28BC:
 	jsr	(loc_B720).l
 	lea	(loc_384B4).l, a6
 	bsr.w	loc_2EBA
-	move.w	#$B4, $FFFFC180.w
+	move.w	#$B4, (General_timer).w
 	move.w	$FFFFFE2C.w, d0
 	lsl.w	#2, d0
 	lea	(loc_2AFC).l, a6
@@ -4314,12 +4314,12 @@ loc_39CA:
 	bra.w	loc_3C26
 	bra.w	loc_3D7E
 loc_39DE:
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	beq.s	loc_3A1E
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_3A02
-	move.b	$FFFFC179.w, d0
+	move.b	(Ctrl_2_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_3A10
 	bsr.w	loc_407E
@@ -4360,7 +4360,7 @@ loc_3A56:
 	dbf	d0, loc_3A56
 	jsr	(loc_B92A).l
 	bsr.w	loc_21C6
-	move.w	#$384, $FFFFC180.w
+	move.w	#$384, (General_timer).w
 	lea	(loc_17554).l, a0
 	move.l	#$6C200002, $00C00004
 	jsr	(loc_2FC8).l
@@ -4413,23 +4413,23 @@ loc_3B38:
 	move.w	d0, $00C00000
 	rts
 loc_3B74:
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_3BB8
 	moveq	#0, d0
 	move.b	$FFFFC1A1.w, d0
 	moveq	#-1, d1
-	btst	#0, $FFFFC177.w
+	btst	#0, (Ctrl_1_pressed).w
 	bne.s	loc_3B98
 	moveq	#1, d1
-	btst	#1, $FFFFC177.w
+	btst	#1, (Ctrl_1_pressed).w
 	beq.s	loc_3BA2
 loc_3B98:
 	add.b	d1, d0
 	andi.b	#3, d0
 	move.b	d0, $FFFFC1A1.w
 loc_3BA2:
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	beq.w	loc_3A1E
 	bsr.w	loc_3EFE
 	bsr.w	loc_409A
@@ -4485,15 +4485,15 @@ loc_3C26:
 	move.w	#$B0, $FFFFD51C.w
 	bsr.w	loc_3D32
 loc_3C5E:
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_3CE2
 loc_3C68:
 	moveq	#-1, d0
-	btst	#0, $FFFFC177.w
+	btst	#0, (Ctrl_1_pressed).w
 	bne.s	loc_3C7C
 	moveq	#1, d0
-	btst	#1, $FFFFC177.w
+	btst	#1, (Ctrl_1_pressed).w
 	beq.s	loc_3C86
 loc_3C7C:
 	add.b	d0, $FFFFC1A2.w
@@ -4506,18 +4506,18 @@ loc_3C86:
 	beq.w	loc_3CFE
 	rts
 loc_3C9E:
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#3, d0
 	bne.s	loc_3CD6
 	moveq	#0, d0
 	move.b	$FFFFFE35.w, d0
-	btst	#2, $FFFFC177.w
+	btst	#2, (Ctrl_1_pressed).w
 	beq.s	loc_3CBC
 	subq.b	#1, d0
 	bcc.s	loc_3CCE
 	moveq	#2, d0
 loc_3CBC:
-	btst	#3, $FFFFC177.w
+	btst	#3, (Ctrl_1_pressed).w
 	beq.s	loc_3CCE
 	addq.b	#1, d0
 	cmpi.b	#3, d0
@@ -4542,18 +4542,18 @@ loc_3CF6:
 loc_3CFC:
 	rts
 loc_3CFE:
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#3, d0
 	bne.s	loc_3CFC
 	moveq	#0, d1
 	move.b	$FFFFFE36.w, d1
-	btst	#2, $FFFFC177.w
+	btst	#2, (Ctrl_1_pressed).w
 	beq.s	loc_3D1C
 	subq.b	#1, d1
 	bcc.s	loc_3D2E
 	moveq	#5, d1
 loc_3D1C:
-	btst	#3, $FFFFC177.w
+	btst	#3, (Ctrl_1_pressed).w
 	beq.s	loc_3D2E
 	addq.b	#1, d1
 	cmpi.b	#6, d1
@@ -4608,19 +4608,19 @@ loc_3DD8:
 	pea	(loc_3CD8).l
 	cmpi.b	#$E, $FFFFC1A3.w
 	beq.w	loc_3E8E
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_3E1E
 loc_3DF2:
 	moveq	#0, d0
 	move.b	$FFFFC1A3.w, d0
-	btst	#0, $FFFFC177.w
+	btst	#0, (Ctrl_1_pressed).w
 	beq.s	loc_3E06
 	subq.b	#1, d0
 	bcc.s	loc_3E18
 	moveq	#$11, d0
 loc_3E06:
-	btst	#1, $FFFFC177.w
+	btst	#1, (Ctrl_1_pressed).w
 	beq.s	loc_3E18
 	addq.b	#1, d0
 	cmpi.b	#$12, d0
@@ -4674,18 +4674,18 @@ loc_3E84:
 	bra.w	loc_3652
 loc_3E8E:
 	pea	(loc_3DF2).l
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_3E84
 	moveq	#0, d0
 	move.b	$FFFFC1A4.w, d0
-	btst	#2, $FFFFC177.w
+	btst	#2, (Ctrl_1_pressed).w
 	beq.s	loc_3EB2
 	subq.b	#1, d0
 	bcc.s	loc_3EC4
 	moveq	#$22, d0
 loc_3EB2:
-	btst	#3, $FFFFC177.w
+	btst	#3, (Ctrl_1_pressed).w
 	beq.s	loc_3EC4
 	addq.b	#1, d0
 	cmpi.b	#$23, d0
@@ -4737,7 +4737,7 @@ loc_3F6E:
 	clr.l	(a0)+
 	dbf	d0, loc_3F6E
 	clr.w	$FFFFC104.w
-	move.w	#$384, $FFFFC180.w
+	move.w	#$384, (General_timer).w
 	bsr.w	loc_2DE8
 	lea	(loc_15BEA).l, a0
 	move.l	#$40000000, $00C00004
@@ -4983,7 +4983,7 @@ loc_4300:
 	lea	$FFFFFE83.w, a4
 	lea	$FFFFC1A8.w, a5
 	lea	$FFFFC1A0.w, a3
-	lea	$FFFFC178.w, a6
+	lea	(Ctrl_2_held).w, a6
 loc_432A:
 	tst.b	$5(a5)
 	bne.s	loc_436A
@@ -5069,7 +5069,7 @@ loc_4440:
 loc_4448:
 	moveq	#0, d0
 	lea	$FFFFFE2C.w, a0
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	ror.w	#1, d0
 	bcc.s	loc_445C
 	addq.w	#1, (a0)
@@ -5181,7 +5181,7 @@ loc_45F0:
 	dc.l	loc_3C723
 	dc.w	$032C, $0AB0
 
-loc_4608:
+Obj_PlayerSelect:
 	bset	#7, (a0)
 	movea.l	$38(a0), a1
 	movea.l	$3C(a0), a2
@@ -5302,10 +5302,10 @@ loc_47DE:
 GameMode_BeginnerEnding:
 	bset	#7, (Saved_game_mode).w
 	beq.s	loc_483A
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_482C
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	beq.s	loc_482C
 	jmp	loc_DA6(pc)
 loc_482C:
@@ -5318,7 +5318,7 @@ loc_483A:
 	bsr.w	loc_2EEC
 	bsr.w	loc_E2A
 	bsr.w	loc_2DE8
-	move.w	#$4B0, $FFFFC180.w
+	move.w	#$4B0, (General_timer).w
 	bsr.w	loc_4882
 	move.w	#$E00, $FFFFC060.w
 	lea	(loc_39410).l, a6
@@ -5342,10 +5342,10 @@ loc_4882:
 	jsr	(loc_2FC8).l
 	lea	(loc_38492).l, a6
 	bra.w	loc_2ED0
-GameMode_Profile:
+GameMode_Cast:
 	bset	#7, (Saved_game_mode).w
 	beq.w	loc_4930
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	bne.s	loc_490C
 	move.l	#$EEE0EEE, d1
 	lea	$FFFFC000.w, a1
@@ -5365,7 +5365,7 @@ loc_48C2:
 	jsr	(loc_B954).l
 	move.w	#0, $FFFFC000.w
 	bsr.w	loc_491C
-	move.w	#$258, $FFFFC180.w
+	move.w	#$258, (General_timer).w
 	addq.w	#4, $FFFFC320.w
 loc_490C:
 	jmp	loc_DA6(pc)
@@ -5391,7 +5391,7 @@ loc_4930:
 	moveq	#-$72, d7
 	bsr.w	loc_35E8
 	clr.w	$FFFFC320.w
-	move.w	#$258, $FFFFC180.w
+	move.w	#$258, (General_timer).w
 	bsr.w	loc_4882
 	move.w	#0, $FFFFC000.w
 	move.l	#$46A00003, d7
@@ -5581,13 +5581,13 @@ loc_4B78:
 GameMode_DuelVsInfo:
 	bset	#7, (Saved_game_mode).w
 	beq.w	loc_4BE8
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_4BBE
-	move.b	$FFFFC179.w, d0
+	move.b	(Ctrl_2_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_4BBE
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	beq.s	loc_4BBE
 	bra.w	loc_DA6
 loc_4BBE:
@@ -5619,7 +5619,7 @@ loc_4BE8:
 	bsr.w	loc_2ED6
 	lea	(loc_38492).l, a6
 	bsr.w	loc_2ED6
-	move.w	#$12C, $FFFFC180.w
+	move.w	#$12C, (General_timer).w
 	lea	$FFFFD000.w, a0
 	lea	$FFFFFE7C.w, a2
 	bsr.w	loc_4D24
@@ -5865,10 +5865,10 @@ loc_5018:
 GameMode_NextDuel:
 	bset	#7, (Saved_game_mode).w
 	beq.w	loc_5096
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_5052
-	move.b	$FFFFC179.w, d0
+	move.b	(Ctrl_2_pressed).w, d0
 	andi.b	#$F0, d0
 	bne.s	loc_5052
 	dc.l	$5378C180
@@ -5903,7 +5903,7 @@ loc_5096:
 	bsr.w	loc_2DDA
 	move.w	#$600F, d1
 	jsr	(loc_387A).l
-	move.w	#$12C, $FFFFC180.w
+	move.w	#$12C, (General_timer).w
 	clr.l	$FFFFC320.w
 	btst	#0, $FFFFC105.w
 	beq.s	loc_50E6
@@ -6162,7 +6162,7 @@ GameMode_GameOver:
 	bset	#7, (Saved_game_mode).w
 	beq.s	loc_53F8
 	ori	#$700, sr
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	beq.s	loc_53E6
 	moveq	#0, d0
 	move.b	$FFFFC17B.w, d0
@@ -6200,7 +6200,7 @@ loc_53F8:
 	move.w	#$2140, d0
 	move.l	#$46160003, d7
 	bsr.w	loc_2D1A
-	move.w	#$12C, $FFFFC180.w
+	move.w	#$12C, (General_timer).w
 	andi	#$F8FF, sr
 	moveq	#-$78, d7
 	bra.w	loc_35E8
@@ -6212,12 +6212,12 @@ GameMode_CharacterProfile:
 	bset	#7, (Saved_game_mode).w
 	beq.s	loc_54B6
 	bsr.w	loc_DA6
-	move.b	$FFFFC177.w, d0
-	or.b	$FFFFC179.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
+	or.b	(Ctrl_2_pressed).w, d0
 	btst	#7, d0
 	bne.w	loc_5488
 	bsr.w	loc_555E
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	beq.s	loc_5494
 	jsr	(loc_B92A).l
 	rts
@@ -6249,7 +6249,7 @@ loc_54B6:
 	lea	(loc_3066A).l, a0
 	moveq	#0, d0
 	bsr.w	loc_329A
-	move.w	#$12C, $FFFFC180.w
+	move.w	#$12C, (General_timer).w
 	lea	$FFFFFE1A.w, a0
 	clr.l	(a0)+
 	clr.l	(a0)+
@@ -6402,7 +6402,7 @@ loc_56EC:
 	move.b	(Ctrl_1).w, d0
 	andi.b	#$70, d0
 	bne.s	loc_571A
-	move.b	$FFFFC178.w, d0
+	move.b	(Ctrl_2_held).w, d0
 	andi.b	#$70, d0
 	bne.s	loc_571A
 	moveq	#3, d0
@@ -6426,10 +6426,10 @@ loc_571A:
 	movem.l	(sp)+, d0/d1/d2/d3/d4/d5/d6/a5
 	move.w	#$B4, d0
 loc_5746:
-	move.b	$FFFFC177.w, d3
+	move.b	(Ctrl_1_pressed).w, d3
 	andi.b	#$70, d3
 	bne.s	loc_576A
-	move.b	$FFFFC179.w, d3
+	move.b	(Ctrl_2_pressed).w, d3
 	andi.b	#$70, d3
 	bne.s	loc_576A
 	movem.l	a5/d6/d5/d4/d3/d2/d1/d0, -(sp)
@@ -6473,11 +6473,11 @@ loc_57BA:
 GameMode_Narration:
 	bset	#7, (Saved_game_mode).w
 	beq.s	loc_5830
-	subq.w	#1, $FFFFC180.w
+	subq.w	#1, (General_timer).w
 	beq.s	loc_5804
 	tst.w	$FFFFFE2C.w
 	beq.s	loc_57F6
-	move.b	$FFFFC177.w, d0
+	move.b	(Ctrl_1_pressed).w, d0
 	dc.l	$02000070
 	bne.s	loc_5804
 loc_57F6:
@@ -6562,7 +6562,7 @@ loc_584A:
 	move.l	#$619E0003, d7
 	bsr.w	loc_2F62
 	andi	#$F8FF, sr
-	move.w	#$2D0, $FFFFC180.w
+	move.w	#$2D0, (General_timer).w
 	move.b	#6, $FFFFD000.w
 	moveq	#-$74, d7
 	tst.w	$FFFFFE2C.w
@@ -7031,7 +7031,7 @@ loc_5F44:
 	move.b	(Ctrl_1).w, d0
 	andi.b	#$F0, d0
 	bne.w	loc_6004
-	move.b	$FFFFC178.w, d0
+	move.b	(Ctrl_2_held).w, d0
 	andi.b	#$F0, d0
 	bne.w	loc_6004
 	btst	#0, $FFFFC105.w
@@ -7044,9 +7044,9 @@ loc_5F44:
 	bcs.s	loc_5F98
 	cmpi.w	#$1F3, $FFFFC32A.w
 	bcc.s	loc_5F98
-	btst	#3, $FFFFC177.w
+	btst	#3, (Ctrl_1_pressed).w
 	bne.w	loc_5FBA
-	btst	#2, $FFFFC179.w
+	btst	#2, (Ctrl_2_pressed).w
 	bne.w	loc_5FC8
 loc_5F98:
 	move.w	$FFFFC322.w, d0
@@ -8106,7 +8106,7 @@ loc_6DA2:
 	addq.w	#4, a2
 	dbf	d0, loc_6DA2
 	rts
-loc_6DB0:
+Obj_Player:
 	bset	#7, (a0)
 	bne.s	loc_6DCC
 	moveq	#0, d2
@@ -10397,7 +10397,7 @@ loc_8AB0:
 	dc.b	$70 ;0x0 (0x00008AC1-0x00008AC2, Entry count: 0x00000001) [Unknown data]
 	dc.b	$74
 	dc.b	$78
-loc_8AC4:
+Obj_TitleLetter:
 	moveq	#0, d0
 	move.b	$1(a0), d0
 	jmp	loc_8ACE(pc,d0.w)
@@ -10468,16 +10468,16 @@ loc_8B8C:
 loc_8B96:
 	move.b	d0, $17(a0)
 	rts
-loc_8B9C:
+Obj_TitleBloodStain:
 	move.l	#loc_157FC, $A(a0)
 	rts
-loc_8BA6:
+Obj_SegaCopyright:
 	move.l	#loc_172EC, $A(a0)
 	move.w	#$150, $18(a0)
 	move.w	#$120, $1C(a0)
 	move.w	#$200, $20(a0)
 	rts
-loc_8BC2:
+Obj_StartPrompt:
 	bset	#7, (a0)
 	bne.s	loc_8BE8
 	move.l	#loc_1731C, $A(a0)
@@ -10492,7 +10492,7 @@ loc_8BE8:
 	eori.b	#$80, $2(a0)
 loc_8BFA:
 	rts
-loc_8BFC:
+Obj_OptionArrow:
 	bset	#7, (a0)
 	bne.s	loc_8C0A
 	move.l	#loc_172E4, $A(a0)
@@ -13720,7 +13720,7 @@ loc_B978:
 	beq.s	loc_B990
 	lea	$FFFFD080.w, a0
 	lea	$FFFFFE8C.w, a2
-	lea	$FFFFC178.w, a6
+	lea	(Ctrl_2_held).w, a6
 	jsr	loc_BA06(pc)
 loc_B990:
 	bsr.w	loc_B4C4
@@ -13746,16 +13746,16 @@ loc_B9BE:
 	dc.b	$48, $E7, $01, $00, $61, $0E, $41, $E8, $00, $80, $4C, $DF, $00, $80, $51, $CF
 	dc.b	$FF, $F0, $61, $D0, $70, $00, $10, $10, $67, $16, $02, $40, $00, $7F, $E5, $40 ;0x0 (0x0000B9D4-0x0000BA04, Entry count: 0x00000030) [Unknown data]
 	dc.b	$00, $7C, $07, $00, $4E, $BB, $00, $78, $61, $00, $FA, $4C, $61, $00, $FA, $9E ;0x20
-loc_BA04:
+Obj_None:
 	rts
 loc_BA06:
 	moveq	#0, d0
 	move.b	(a0), d0
-	beq.s	loc_BA04
+	beq.s	Obj_None
 	andi.w	#$7F, d0
 	asl.w	#2, d0
 	ori	#$700, sr
-	jmp	loc_BA72(pc,d0.w)
+	jmp	ObjectTable(pc,d0.w)
 loc_BA1A:
 	moveq	#0, d0
 	move.b	(a0), d0
@@ -13763,7 +13763,7 @@ loc_BA1A:
 	andi.w	#$7F, d0
 	asl.w	#2, d0
 	ori	#$700, sr
-	jsr	loc_BA72(pc,d0.w)
+	jsr	ObjectTable(pc,d0.w)
 	bsr.w	loc_B44A
 	bsr.w	loc_B4A0
 loc_BA36:
@@ -13771,11 +13771,11 @@ loc_BA36:
 loc_BA38:
 	moveq	#0, d0
 	move.b	(a0), d0
-	beq.s	loc_BA04
+	beq.s	Obj_None
 	andi.w	#$7F, d0
 	asl.w	#2, d0
 	ori	#$700, sr
-	jmp	loc_BA72(pc,d0.w)
+	jmp	ObjectTable(pc,d0.w)
 loc_BA4C:
 	moveq	#0, d0
 	move.b	(a0), d0
@@ -13785,111 +13785,114 @@ loc_BA4C:
 	andi.w	#$7F, d0
 	asl.w	#2, d0
 	ori	#$700, sr
-	jsr	loc_BA72(pc,d0.w)
+	jsr	ObjectTable(pc,d0.w)
 loc_BA68:
 	bsr.w	loc_B44A
 	bsr.w	loc_B4A0
 loc_BA70:
 	rts
-loc_BA72:
-	bra.w	loc_BA04
-	bra.w	loc_8AC4
-	bra.w	loc_8B9C
-	bra.w	loc_8BA6
-	bra.w	loc_8BC2
-	bra.w	loc_8BFC
-	bra.w	loc_598A
-	bra.w	loc_4608
-	bra.w	loc_6DB0
-	bra.w	loc_8C20
-	bra.w	loc_915C
-	bra.w	loc_9232
-	bra.w	loc_943C
-	bra.w	loc_94EA
-	bra.w	loc_95E2
-	bra.w	loc_9630
-	bra.w	loc_97D6
-	bra.w	loc_981E
-	bra.w	loc_9976
-	bra.w	loc_9A1C
-	bra.w	loc_9A56
-	bra.w	loc_9B88
-	bra.w	loc_9C12
-	bra.w	loc_9C58
-	bra.w	loc_9E8C
-	bra.w	loc_9F64
-	bra.w	loc_A024
-	bra.w	loc_A054
-	bra.w	loc_A834
-	bra.w	loc_A8B0
-	bra.w	loc_A98C
-	bra.w	loc_BA70
-	bra.w	loc_A0C8
-	bra.w	loc_A284
-	bra.w	loc_A408
-	bra.w	loc_A43C
-	bra.w	loc_A50E
-	bra.w	loc_A5F0
-	bra.w	loc_A7B4
-	bra.w	loc_B00A
-	bra.w	loc_B0AA
-	bra.w	loc_B108
-	bra.w	loc_B140
-	bra.w	loc_B1F0
-	bra.w	loc_B236
-	bra.w	loc_B2DC
-	bra.w	loc_D4EE
-	bra.w	loc_D51A
-	bra.w	loc_D5B4
-	bra.w	loc_E600
-	bra.w	loc_E62A
-	bra.w	loc_E654
-	bra.w	loc_E694
-	bra.w	loc_E6BE
-	bra.w	loc_E6FE
-	bra.w	loc_E728
-	bra.w	loc_F6C8
-	bra.w	loc_F6F2
-	bra.w	loc_F71C
-	bra.w	loc_F75C
-	bra.w	loc_F786
-	bra.w	loc_F7C6
-	bra.w	loc_F7F0
-	bra.w	loc_10236
-	bra.w	loc_10250
-	bra.w	loc_1028A
-	bra.w	loc_10F60
-	bra.w	loc_10F8A
-	bra.w	loc_10FB4
-	bra.w	loc_10FDC
-	bra.w	loc_11004
-	bra.w	loc_1107C
-	bra.w	loc_1109A
-	bra.w	loc_1109A
-	bra.w	loc_11982
-	bra.w	loc_119BE
-	bra.w	loc_119E0
-	bra.w	loc_1267C
-	bra.w	loc_126B2
-	bra.w	loc_12B76
-	bra.w	loc_12F6C
-	bra.w	loc_1308E
-	bra.w	loc_131A8
-	bra.w	loc_13768
-	bra.w	loc_131BC
-	bra.w	loc_137C6
-	bra.w	loc_13874
-	bra.w	loc_1388E
-	bra.w	loc_684A
-	bra.w	loc_699C
-	bra.w	loc_6A1C
-	bra.w	loc_6AB8
-	bra.w	loc_6B5E
-	bra.w	loc_6C2E
-	bra.w	loc_6C74
-	bra.w	loc_6CD4
-	bra.w	loc_D5EE
-	bra.w	loc_1367E
+
+
+ObjectTable:
+	bra.w	Obj_None	; 0
+	bra.w	Obj_TitleLetter	; 1
+	bra.w	Obj_TitleBloodStain	; 2
+	bra.w	Obj_SegaCopyright	; 3
+	bra.w	Obj_StartPrompt	; 4
+	bra.w	Obj_OptionArrow	; 5
+	bra.w	loc_598A	; 6
+	bra.w	Obj_PlayerSelect	; 7
+	bra.w	Obj_Player	; 8
+	bra.w	loc_8C20	; 9
+	bra.w	loc_915C	; $A
+	bra.w	loc_9232	; $B
+	bra.w	loc_943C	; $C
+	bra.w	loc_94EA	; $D
+	bra.w	loc_95E2	; $E
+	bra.w	loc_9630	; $F
+	bra.w	loc_97D6	; $10
+	bra.w	loc_981E	; $11
+	bra.w	loc_9976	; $12
+	bra.w	loc_9A1C	; $13
+	bra.w	loc_9A56	; $14
+	bra.w	loc_9B88	; $15
+	bra.w	loc_9C12	; $16
+	bra.w	loc_9C58	; $17
+	bra.w	loc_9E8C	; $18
+	bra.w	loc_9F64	; $19
+	bra.w	loc_A024	; $1A
+	bra.w	loc_A054	; $1B
+	bra.w	loc_A834	; $1C
+	bra.w	loc_A8B0	; $1D
+	bra.w	loc_A98C	; $1E
+	bra.w	loc_BA70	; $1F
+	bra.w	loc_A0C8	; $20
+	bra.w	loc_A284	; $21
+	bra.w	loc_A408	; $22
+	bra.w	loc_A43C	; $23
+	bra.w	loc_A50E	; $24
+	bra.w	loc_A5F0	; $25
+	bra.w	loc_A7B4	; $26
+	bra.w	loc_B00A	; $27
+	bra.w	loc_B0AA	; $28
+	bra.w	loc_B108	; $29
+	bra.w	loc_B140	; $2A
+	bra.w	loc_B1F0	; $2B
+	bra.w	loc_B236	; $2C
+	bra.w	loc_B2DC	; $2D
+	bra.w	loc_D4EE	; $2E
+	bra.w	loc_D51A	; $2F
+	bra.w	loc_D5B4	; $30
+	bra.w	loc_E600	; $31
+	bra.w	loc_E62A	; $32
+	bra.w	loc_E654	; $33
+	bra.w	loc_E694	; $34
+	bra.w	loc_E6BE	; $35
+	bra.w	loc_E6FE	; $36
+	bra.w	loc_E728	; $37
+	bra.w	loc_F6C8	; $38
+	bra.w	loc_F6F2	; $39
+	bra.w	loc_F71C	; $3A
+	bra.w	loc_F75C	; $3B
+	bra.w	loc_F786	; $3C
+	bra.w	loc_F7C6	; $3D
+	bra.w	loc_F7F0	; $3E
+	bra.w	loc_10236	; $3F
+	bra.w	loc_10250	; $40
+	bra.w	loc_1028A	; $41
+	bra.w	loc_10F60	; $42
+	bra.w	loc_10F8A	; $43
+	bra.w	loc_10FB4	; $44
+	bra.w	loc_10FDC	; $45
+	bra.w	loc_11004	; $46
+	bra.w	loc_1107C	; $47
+	bra.w	loc_1109A	; $48
+	bra.w	loc_1109A	; $49
+	bra.w	loc_11982	; $4A
+	bra.w	loc_119BE	; $4B
+	bra.w	loc_119E0	; $4C
+	bra.w	loc_1267C	; $4D
+	bra.w	loc_126B2	; $4E
+	bra.w	loc_12B76	; $4F
+	bra.w	loc_12F6C	; $50
+	bra.w	loc_1308E	; $51
+	bra.w	loc_131A8	; $52
+	bra.w	loc_13768	; $53
+	bra.w	loc_131BC	; $54
+	bra.w	loc_137C6	; $55
+	bra.w	loc_13874	; $56
+	bra.w	loc_1388E	; $57
+	bra.w	loc_684A	; $58
+	bra.w	loc_699C	; $59
+	bra.w	loc_6A1C	; $5A
+	bra.w	loc_6AB8	; $5B
+	bra.w	loc_6B5E	; $5C
+	bra.w	loc_6C2E	; $5D
+	bra.w	loc_6C74	; $5E
+	bra.w	loc_6CD4	; $5F
+	bra.w	loc_D5EE	; $60
+	bra.w	loc_1367E	; $61
+
 loc_BBFA:
 	add.w	d5, $60(a0)
 	move.w	$60(a0), d2

@@ -55,3 +55,5 @@ Ctrl_1_pressed = ramaddr($FFFFC177) ; byte ; buttons being pressed newly this fr
 Ctrl_2 = ramaddr($FFFFC178) ; word ; both held and pressed
 Ctrl_2_held = ramaddr($FFFFC178) ; byte
 Ctrl_2_pressed = ramaddr($FFFFC179) ; byte
+V_int_run_count = ramaddr($FFFFC17A) ; word
+General_timer = ramaddr($FFFFC180) ; word
